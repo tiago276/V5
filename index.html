@@ -402,7 +402,6 @@
             const params = new URLSearchParams(window.location.search);
             if (params.has('status') && params.get('status') === 'approved') {
                  if (window.location.hash !== '#sucesso') {
-                    // Limpa os parâmetros da URL e define o hash para #sucesso
                     history.replaceState(null, '', window.location.pathname + '#sucesso');
                     showSection('#sucesso');
                  }
@@ -418,4 +417,4 @@
     </script>
 
 </body>
-    </html>
+</html>
