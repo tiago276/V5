@@ -180,12 +180,14 @@
 
 
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
         // ====================================================
         // CONFIGURAÇÕES
         // ====================================================
         const PAYMENT_LINK = 'https://mpago.la/2pLphB7';
         const ADMIN_PASSWORD = 'tiagoSILVA06432+';
+        // Este é o seu banco de dados online. NÃO MUDE ESTE LINK!
+        const DATABASE_URL = 'https://jsonbase.com/tiagosilvaprojects/avacoins-palace-stock';
 
         // ====================================================
         // ELEMENTOS DO DOM
@@ -207,10 +209,35 @@
         document.getElementById('year').textContent = new Date().getFullYear();
 
         // ====================================================
-        // FUNÇÕES UTILITÁRIAS
+        // FUNÇÕES DO BANCO DE DADOS ONLINE
         // ====================================================
-        const getCredentials = () => JSON.parse(localStorage.getItem('credentials') || '[]');
-        const saveCredentials = (creds) => localStorage.setItem('credentials', JSON.stringify(creds));
+        // Lê as credenciais do banco de dados online
+        const getCredentials = async () => {
+            try {
+                const response = await fetch(DATABASE_URL);
+                if (!response.ok) return []; // Se não encontrar, retorna vazio
+                const data = await response.json();
+                return data.credentials || [];
+            } catch (error) {
+                console.error("Erro ao buscar credenciais:", error);
+                return [];
+            }
+        };
+
+        // Salva as credenciais no banco de dados online
+        const saveCredentials = async (creds) => {
+            try {
+                await fetch(DATABASE_URL, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ credentials: creds }),
+                });
+            } catch (error) {
+                console.error("Erro ao salvar credenciais:", error);
+                showToast('Erro ao salvar o estoque. Tente novamente.');
+            }
+        };
+
         const getIsAdmin = () => sessionStorage.getItem('isAdminAuthenticated') === 'true';
         const setIsAdmin = (value) => sessionStorage.setItem('isAdminAuthenticated', String(value));
         const showToast = (message) => {
@@ -224,7 +251,7 @@
         // ====================================================
         // ROTEAMENTO E RENDERIZAÇÃO
         // ====================================================
-        const showSection = (hash) => {
+        const showSection = async (hash) => {
             const targetId = hash ? hash.substring(1) : 'venda';
             let sectionFound = false;
 
@@ -245,20 +272,21 @@
                 if (getIsAdmin()) {
                     loginView.classList.add('hidden');
                     adminPanel.classList.remove('hidden');
-                    renderAdminPanel();
+                    await renderAdminPanel();
                 } else {
                     loginView.classList.remove('hidden');
                     adminPanel.classList.add('hidden');
                 }
             } else if (targetId === 'sucesso') {
-                processPurchase();
+                await processPurchase();
             } else {
-                renderPurchaseArea();
+                await renderPurchaseArea();
             }
         };
 
-        const renderPurchaseArea = () => {
-            const stock = getCredentials();
+        const renderPurchaseArea = async () => {
+            purchaseArea.innerHTML = `<div class="my-4"><span class="text-gray-400">Carregando estoque...</span></div>`;
+            const stock = await getCredentials();
             if (stock.length > 0) {
                 purchaseArea.innerHTML = `
                     <div class="my-4">
@@ -276,11 +304,12 @@
             }
         };
 
-        const processPurchase = () => {
-            let stock = getCredentials();
+        const processPurchase = async () => {
+            successContent.innerHTML = `<h2 class="text-2xl font-bold text-yellow-400">Processando...</h2>`;
+            let stock = await getCredentials();
             if (stock.length > 0) {
-                const delivered = stock.shift();
-                saveCredentials(stock);
+                const delivered = stock.shift(); // Pega e remove a primeira conta
+                await saveCredentials(stock); // Salva o estoque atualizado online
                 successContent.innerHTML = `
                     <h2 class="text-2xl font-bold text-green-400">Pagamento Aprovado!</h2>
                     <p class="text-gray-400 mt-2">Seu acesso foi liberado. Copie e guarde suas credenciais.</p>
@@ -304,8 +333,9 @@
             }
         };
 
-        const renderAdminPanel = () => {
-            const stock = getCredentials();
+        const renderAdminPanel = async () => {
+            credentialsList.innerHTML = '<p class="text-center text-gray-500">Carregando...</p>';
+            const stock = await getCredentials();
             stockCountAdmin.textContent = stock.length;
             credentialsList.innerHTML = '';
             if (stock.length === 0) {
@@ -341,40 +371,41 @@
             }
         });
 
-        addCredentialButton.addEventListener('click', () => {
+        addCredentialButton.addEventListener('click', async () => {
             const email = newEmailInput.value.trim();
             const password = newPasswordInput.value.trim();
             if (!email) {
                 showToast('O campo de e-mail é obrigatório.');
                 return;
             }
-            const stock = getCredentials();
+            addCredentialButton.disabled = true;
+            addCredentialButton.textContent = 'Adicionando...';
+            const stock = await getCredentials();
             stock.push({ id: String(Date.now()), email, password });
-            saveCredentials(stock);
+            await saveCredentials(stock);
             newEmailInput.value = '';
             newPasswordInput.value = '';
             showToast('Credencial adicionada com sucesso!');
-            renderAdminPanel();
+            await renderAdminPanel();
+            addCredentialButton.disabled = false;
+            addCredentialButton.textContent = 'Adicionar Credencial';
         });
 
-        credentialsList.addEventListener('click', (e) => {
+        credentialsList.addEventListener('click', async (e) => {
             const button = e.target.closest('button');
             if (button && button.dataset.id) {
                 const id = button.dataset.id;
-                let stock = getCredentials();
+                let stock = await getCredentials();
                 stock = stock.filter(cred => cred.id !== id);
-                saveCredentials(stock);
+                await saveCredentials(stock);
                 showToast('Credencial removida.');
-                renderAdminPanel();
+                await renderAdminPanel();
             }
         });
         
         window.addEventListener('hashchange', () => showSection(window.location.hash));
         
-        // Simular redirecionamento do Mercado Pago
-        // Se a URL for do tipo `seusite.com/#/sucesso`, o roteador vai pegar
         const handleRedirect = () => {
-          // No GitHub Pages, a URL pode ser `user.github.io/repo/#/sucesso`
           const hashPath = window.location.hash.split('#/')[1] || '';
           if(hashPath.startsWith('sucesso')){
              window.location.hash = '#sucesso';
@@ -385,9 +416,9 @@
         // INICIALIZAÇÃO
         // ====================================================
         handleRedirect();
-        showSection(window.location.hash);
+        await showSection(window.location.hash);
     });
     </script>
 
 </body>
-            </html>
+</html>
