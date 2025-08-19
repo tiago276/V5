@@ -186,7 +186,6 @@
         // ====================================================
         const PAYMENT_LINK = 'https://mpago.la/2pLphB7';
         const ADMIN_PASSWORD = 'tiagoSILVA06432+';
-        // Este é o seu banco de dados online. NÃO MUDE ESTE LINK!
         const DATABASE_URL = 'https://jsonbase.com/tiagosilvaprojects/avacoins-palace-stock';
 
         // ====================================================
@@ -211,11 +210,10 @@
         // ====================================================
         // FUNÇÕES DO BANCO DE DADOS ONLINE
         // ====================================================
-        // Lê as credenciais do banco de dados online
         const getCredentials = async () => {
             try {
                 const response = await fetch(DATABASE_URL);
-                if (!response.ok) return []; // Se não encontrar, retorna vazio
+                if (!response.ok) return [];
                 const data = await response.json();
                 return data.credentials || [];
             } catch (error) {
@@ -224,7 +222,6 @@
             }
         };
 
-        // Salva as credenciais no banco de dados online
         const saveCredentials = async (creds) => {
             try {
                 await fetch(DATABASE_URL, {
@@ -253,18 +250,14 @@
         // ====================================================
         const showSection = async (hash) => {
             const targetId = hash ? hash.substring(1) : 'venda';
-            let sectionFound = false;
-
+            
             sections.forEach(section => {
-                if (section.id === targetId) {
-                    section.classList.remove('hidden');
-                    sectionFound = true;
-                } else {
-                    section.classList.add('hidden');
-                }
+                section.classList.add('hidden');
             });
-
-            if (!sectionFound) {
+            const sectionToShow = document.getElementById(targetId);
+            if (sectionToShow) {
+                sectionToShow.classList.remove('hidden');
+            } else {
                 document.getElementById('venda').classList.remove('hidden');
             }
 
@@ -308,8 +301,8 @@
             successContent.innerHTML = `<h2 class="text-2xl font-bold text-yellow-400">Processando...</h2>`;
             let stock = await getCredentials();
             if (stock.length > 0) {
-                const delivered = stock.shift(); // Pega e remove a primeira conta
-                await saveCredentials(stock); // Salva o estoque atualizado online
+                const delivered = stock.shift();
+                await saveCredentials(stock);
                 successContent.innerHTML = `
                     <h2 class="text-2xl font-bold text-green-400">Pagamento Aprovado!</h2>
                     <p class="text-gray-400 mt-2">Seu acesso foi liberado. Copie e guarde suas credenciais.</p>
@@ -406,19 +399,23 @@
         window.addEventListener('hashchange', () => showSection(window.location.hash));
         
         const handleRedirect = () => {
-          const hashPath = window.location.hash.split('#/')[1] || '';
-          if(hashPath.startsWith('sucesso')){
-             window.location.hash = '#sucesso';
-          }
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('status') && params.get('status') === 'approved') {
+                 if (window.location.hash !== '#sucesso') {
+                    // Limpa os parâmetros da URL e define o hash para #sucesso
+                    history.replaceState(null, '', window.location.pathname + '#sucesso');
+                    showSection('#sucesso');
+                 }
+            }
         };
 
         // ====================================================
         // INICIALIZAÇÃO
         // ====================================================
         handleRedirect();
-        await showSection(window.location.hash);
+        await showSection(window.location.hash || '#venda');
     });
     </script>
 
 </body>
-</html>
+    </html>
