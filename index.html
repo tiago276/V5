@@ -1,93 +1,393 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reclamações de Clientes</title>
+    <title>Avacoins Palace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
+        html { scroll-behavior: smooth; }
         body {
-            font-family: Arial, sans-serif;
-            background-color: #000000; /* Fundo preto adicionado */
-            color: #ffffff; /* Cor do texto alterada para branco */
-            margin: 0;
-            padding: 20px;
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; /* bg-gray-900 */
+            color: #f3f4f6; /* text-gray-200 */
         }
-        .container {
-            background-color: #333333; /* Cor de fundo do container alterada para cinza escuro */
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(255,255,255,0.1);
-            max-width: 600px;
-            margin: auto;
+        .card {
+            background-color: #1f2937; /* bg-gray-800 */
+            border: 1px solid #374151; /* border-gray-700 */
         }
-        h1 {
-            color: #ffffff; /* Cor do título alterada para branco */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border-radius: 0.375rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+            cursor: pointer;
         }
-        p {
-            color: #cccccc; /* Cor do texto alterada para cinza claro */
+        .btn-primary {
+            background-color: #e5e7eb; /* bg-gray-200 */
+            color: #111827; /* text-gray-900 */
         }
-        .button {
-            background-color: #4CAF50;
-            color: #ffffff; /* Cor do texto do botão alterada para branco */
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
+        .btn-primary:hover {
+            background-color: #d1d5db; /* bg-gray-300 */
         }
-        .footer {
-            margin-top: 20px;
-            font-size: 0.8em;
-            color: #aaaaaa; /* Cor do texto do rodapé alterada para cinza claro */
+        .btn-destructive {
+             background-color: #b91c1c; /* bg-red-700 */
+             color: #ffffff;
         }
-        .video-container {
-            position: relative;
-            padding-bottom: 177.78%; /* Proporção 9:16 para shorts do Instagram */
-            height: 0;
-            overflow: hidden;
+        .btn-destructive:hover {
+             background-color: #991b1b; /* bg-red-800 */
         }
-        .video-container video {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .btn-disabled {
+            background-color: #4b5563; /* bg-gray-600 */
+            color: #9ca3af; /* text-gray-400 */
+            cursor: not-allowed;
+        }
+        .input {
+            background-color: #374151; /* bg-gray-700 */
+            border: 1px solid #4b5563; /* border-gray-600 */
+            color: #f3f4f6;
+            border-radius: 0.375rem;
+            padding: 0.5rem 0.75rem;
             width: 100%;
-            height: 100%;
-            object-fit: cover; /* Mantém a proporção do vídeo e preenche todo o container */
+        }
+        .hidden { display: none; }
+        [data-section] {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #2dd4bf; /* bg-teal-400 */
+            color: #0f172a; /* text-slate-900 */
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .toast.show {
+            opacity: 1;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="video-container">
-        <video controls>
-            <source src="vídeo.mp4" type="video/mp4">
-            Seu navegador não suporta o elemento de vídeo.
-        </video>
+    <!-- Toast Notification -->
+    <div id="toast-notification" class="toast"></div>
+
+    <!-- ==================================================== -->
+    <!-- SEÇÃO DE VENDA -->
+    <!-- ==================================================== -->
+    <div id="venda" data-section>
+        
+        <main class="w-full max-w-md overflow-hidden shadow-lg card rounded-lg">
+            <header class="p-6 text-center">
+                 <div class="flex items-center justify-center gap-3 mb-2">
+                    <img src="https://i.postimg.cc/4yQhpcCQ/download.webp" alt="Logo" class="w-12 h-12 rounded-full" />
+                    <h1 class="text-3xl font-extrabold tracking-tight">Avacoins palace1</h1>
+                </div>
+            </header>
+            <div class="aspect-video w-full overflow-hidden pointer-events-none -mt-4">
+                <iframe
+                    src="https://streamable.com/e/5n12q1?autoplay=1&muted=1&loop=1&controls=0"
+                    frameborder="0"
+                    width="100%"
+                    height="100%"
+                    allowfullscreen
+                    allow="autoplay"
+                    class="w-full h-full"
+                ></iframe>
+            </div>
+            <div class="p-6 text-center">
+                <h2 class="text-2xl font-bold">Contas fake de 20k</h2>
+                <p class="mt-2 text-gray-400">Compre com segurança e receba seu acesso de forma rápida e automática.</p>
+                
+                <div id="purchase-area">
+                    <!-- O conteúdo aqui será inserido pelo JavaScript -->
+                </div>
+            </div>
+        </main>
+
+        <footer class="text-center py-8 text-gray-500">
+            <p>&copy; <span id="year"></span> Loja Segura. Todos os direitos reservados.</p>
+            <a href="#admin" class="text-sm hover:text-white mt-2 inline-block">Painel de Controle</a>
+        </footer>
     </div>
 
-    <h1>Formulário de Reclamação</h1>
-    <p>Prezados clientes,</p>
-    <p>Estamos comprometidos em oferecer o melhor serviço possível. Se você tem alguma reclamação ou feedback a nos fornecer, por favor preencha o formulário abaixo:</p>
-    
-    <form action="mailto:tiagosilva65anjos@gmail.com" method="post" enctype="text/plain">
-        <label for="nome">Seu Nome:</label><br>
-        <input type="text" id="nome" name="nome" required><br><br>
-        
-        <label for="email">Seu Email:</label><br>
-        <input type="email" id="email" name="email" required><br><br>
-        
-        <label for="reclamacao">Sua Reclamação:</label><br>
-        <textarea id="reclamacao" name="reclamacao" rows="4" required></textarea><br><br>
-        
-        <input type="submit" value="Enviar" class="button">
-    </form>
-
-    <p>Agradecemos pela sua colaboração e assim que possível entraremos em contato.</p>
-    
-    <div class="footer">
-        <p>Atenciosamente,</p>
-        <p>Sua Empresa</p>
+    <!-- ==================================================== -->
+    <!-- SEÇÃO DE SUCESSO -->
+    <!-- ==================================================== -->
+    <div id="sucesso" data-section class="hidden">
+        <main class="w-full max-w-md text-center card rounded-lg p-8 space-y-6">
+            <div id="success-content">
+                <!-- Conteúdo de sucesso/erro aqui -->
+            </div>
+        </main>
     </div>
-</div>
+
+
+    <!-- ==================================================== -->
+    <!-- SEÇÃO DO PAINEL DE CONTROLE (ADMIN) -->
+    <!-- ==================================================== -->
+    <div id="admin" data-section class="hidden">
+         <div id="login-view" class="w-full max-w-sm">
+            <div class="card rounded-lg p-8 space-y-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-center">Acesso Restrito</h2>
+                    <p class="text-center text-gray-400">Insira a senha do painel.</p>
+                </div>
+                <input type="password" id="password-input" class="input" placeholder="********">
+                <p id="login-error" class="text-red-500 text-sm hidden">Senha incorreta.</p>
+                <button id="login-button" class="btn btn-primary w-full">Entrar</button>
+                 <a href="#venda" class="block text-center text-sm text-gray-400 hover:text-white mt-4">Voltar para a loja</a>
+            </div>
+        </div>
+        
+        <div id="admin-panel" class="w-full max-w-2xl hidden">
+            <h1 class="text-3xl font-bold mb-8 text-center">Painel de Controle</h1>
+
+            <div class="card rounded-lg p-6 mb-8">
+                <h2 class="text-xl font-bold">Adicionar Nova Credencial</h2>
+                <div class="space-y-4 mt-4">
+                    <input type="email" id="new-email" class="input" placeholder="exemplo@email.com">
+                    <input type="text" id="new-password" class="input" placeholder="senha_super_segura (opcional)">
+                    <button id="add-credential" class="btn btn-primary w-full">Adicionar Credencial</button>
+                </div>
+            </div>
+
+            <div class="card rounded-lg p-6">
+                 <h2 class="text-xl font-bold">Estoque de Contas (<span id="stock-count-admin">0</span>)</h2>
+                 <div id="credentials-list" class="space-y-3 mt-4 max-h-96 overflow-y-auto">
+                    <!-- Lista de credenciais aqui -->
+                 </div>
+            </div>
+             <a href="#venda" class="block text-center text-sm text-gray-400 hover:text-white mt-8">Voltar para a loja</a>
+        </div>
+    </div>
+
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // ====================================================
+        // CONFIGURAÇÕES
+        // ====================================================
+        const PAYMENT_LINK = 'https://mpago.la/2pLphB7';
+        const ADMIN_PASSWORD = 'tiagoSILVA06432+';
+
+        // ====================================================
+        // ELEMENTOS DO DOM
+        // ====================================================
+        const sections = document.querySelectorAll('[data-section]');
+        const purchaseArea = document.getElementById('purchase-area');
+        const successContent = document.getElementById('success-content');
+        const passwordInput = document.getElementById('password-input');
+        const loginButton = document.getElementById('login-button');
+        const loginError = document.getElementById('login-error');
+        const loginView = document.getElementById('login-view');
+        const adminPanel = document.getElementById('admin-panel');
+        const newEmailInput = document.getElementById('new-email');
+        const newPasswordInput = document.getElementById('new-password');
+        const addCredentialButton = document.getElementById('add-credential');
+        const credentialsList = document.getElementById('credentials-list');
+        const stockCountAdmin = document.getElementById('stock-count-admin');
+        const toast = document.getElementById('toast-notification');
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // ====================================================
+        // FUNÇÕES UTILITÁRIAS
+        // ====================================================
+        const getCredentials = () => JSON.parse(localStorage.getItem('credentials') || '[]');
+        const saveCredentials = (creds) => localStorage.setItem('credentials', JSON.stringify(creds));
+        const getIsAdmin = () => sessionStorage.getItem('isAdminAuthenticated') === 'true';
+        const setIsAdmin = (value) => sessionStorage.setItem('isAdminAuthenticated', String(value));
+        const showToast = (message) => {
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        };
+
+        // ====================================================
+        // ROTEAMENTO E RENDERIZAÇÃO
+        // ====================================================
+        const showSection = (hash) => {
+            const targetId = hash ? hash.substring(1) : 'venda';
+            let sectionFound = false;
+
+            sections.forEach(section => {
+                if (section.id === targetId) {
+                    section.classList.remove('hidden');
+                    sectionFound = true;
+                } else {
+                    section.classList.add('hidden');
+                }
+            });
+
+            if (!sectionFound) {
+                document.getElementById('venda').classList.remove('hidden');
+            }
+
+            if (targetId === 'admin') {
+                if (getIsAdmin()) {
+                    loginView.classList.add('hidden');
+                    adminPanel.classList.remove('hidden');
+                    renderAdminPanel();
+                } else {
+                    loginView.classList.remove('hidden');
+                    adminPanel.classList.add('hidden');
+                }
+            } else if (targetId === 'sucesso') {
+                processPurchase();
+            } else {
+                renderPurchaseArea();
+            }
+        };
+
+        const renderPurchaseArea = () => {
+            const stock = getCredentials();
+            if (stock.length > 0) {
+                purchaseArea.innerHTML = `
+                    <div class="my-4">
+                        <span class="text-4xl font-extrabold text-white">R$ 10,00</span>
+                    </div>
+                    <a href="${PAYMENT_LINK}" class="btn btn-primary w-full">Comprar Agora</a>
+                `;
+            } else {
+                purchaseArea.innerHTML = `
+                    <div class="my-4">
+                        <span class="text-2xl font-bold text-red-500">Produto Esgotado</span>
+                    </div>
+                    <button class="btn btn-disabled w-full">Indisponível</button>
+                `;
+            }
+        };
+
+        const processPurchase = () => {
+            let stock = getCredentials();
+            if (stock.length > 0) {
+                const delivered = stock.shift();
+                saveCredentials(stock);
+                successContent.innerHTML = `
+                    <h2 class="text-2xl font-bold text-green-400">Pagamento Aprovado!</h2>
+                    <p class="text-gray-400 mt-2">Seu acesso foi liberado. Copie e guarde suas credenciais.</p>
+                    <div class="mt-6 p-4 bg-gray-900 rounded-lg text-left space-y-3 font-mono">
+                        <p><strong>Email:</strong> ${delivered.email}</p>
+                        <p><strong>Senha:</strong> ${delivered.password || 'N/A'}</p>
+                    </div>
+                    <button id="copy-button" class="btn btn-primary w-full mt-6">Copiar</button>
+                    <a href="#venda" class="block text-center text-sm text-gray-400 hover:text-white mt-4">Voltar para a loja</a>
+                `;
+                document.getElementById('copy-button').addEventListener('click', () => {
+                    const text = `Email: ${delivered.email}\nSenha: ${delivered.password || 'N/A'}`;
+                    navigator.clipboard.writeText(text).then(() => showToast('Credenciais copiadas!'));
+                });
+            } else {
+                 successContent.innerHTML = `
+                    <h2 class="text-2xl font-bold text-red-500">Estoque Esgotado!</h2>
+                    <p class="text-gray-400 mt-2">Não há mais credenciais disponíveis. Entre em contato com o suporte.</p>
+                    <a href="#venda" class="block text-center text-sm text-gray-400 hover:text-white mt-4">Voltar para a loja</a>
+                 `;
+            }
+        };
+
+        const renderAdminPanel = () => {
+            const stock = getCredentials();
+            stockCountAdmin.textContent = stock.length;
+            credentialsList.innerHTML = '';
+            if (stock.length === 0) {
+                credentialsList.innerHTML = '<p class="text-center text-gray-500">Nenhuma credencial em estoque.</p>';
+                return;
+            }
+            stock.forEach(cred => {
+                const item = document.createElement('div');
+                item.className = 'flex items-center justify-between p-3 bg-gray-900 rounded-lg font-mono text-sm gap-4';
+                item.innerHTML = `
+                    <div class="truncate">
+                        <p class="truncate"><strong>Email:</strong> ${cred.email}</p>
+                        <p class="truncate"><strong>Senha:</strong> ${cred.password || 'N/A'}</p>
+                    </div>
+                    <button data-id="${cred.id}" class="btn btn-destructive p-2 h-auto flex-shrink-0">X</button>
+                `;
+                credentialsList.appendChild(item);
+            });
+        };
+
+        // ====================================================
+        // EVENT LISTENERS
+        // ====================================================
+        loginButton.addEventListener('click', () => {
+            if (passwordInput.value === ADMIN_PASSWORD) {
+                setIsAdmin(true);
+                loginError.classList.add('hidden');
+                passwordInput.value = '';
+                showSection('#admin');
+            } else {
+                setIsAdmin(false);
+                loginError.classList.remove('hidden');
+            }
+        });
+
+        addCredentialButton.addEventListener('click', () => {
+            const email = newEmailInput.value.trim();
+            const password = newPasswordInput.value.trim();
+            if (!email) {
+                showToast('O campo de e-mail é obrigatório.');
+                return;
+            }
+            const stock = getCredentials();
+            stock.push({ id: String(Date.now()), email, password });
+            saveCredentials(stock);
+            newEmailInput.value = '';
+            newPasswordInput.value = '';
+            showToast('Credencial adicionada com sucesso!');
+            renderAdminPanel();
+        });
+
+        credentialsList.addEventListener('click', (e) => {
+            const button = e.target.closest('button');
+            if (button && button.dataset.id) {
+                const id = button.dataset.id;
+                let stock = getCredentials();
+                stock = stock.filter(cred => cred.id !== id);
+                saveCredentials(stock);
+                showToast('Credencial removida.');
+                renderAdminPanel();
+            }
+        });
+        
+        window.addEventListener('hashchange', () => showSection(window.location.hash));
+        
+        // Simular redirecionamento do Mercado Pago
+        // Se a URL for do tipo `seusite.com/#/sucesso`, o roteador vai pegar
+        const handleRedirect = () => {
+          // No GitHub Pages, a URL pode ser `user.github.io/repo/#/sucesso`
+          const hashPath = window.location.hash.split('#/')[1] || '';
+          if(hashPath.startsWith('sucesso')){
+             window.location.hash = '#sucesso';
+          }
+        };
+
+        // ====================================================
+        // INICIALIZAÇÃO
+        // ====================================================
+        handleRedirect();
+        showSection(window.location.hash);
+    });
+    </script>
 
 </body>
-</html>
+            </html>
